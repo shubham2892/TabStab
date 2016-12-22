@@ -1,0 +1,44 @@
+{
+	"manifest_version": 2,
+	"name": "TabStab",
+	"description": "Working with too many tabs. Now switch between them efficiently using this plugin. Helps you switch to most recently used tab using keyboard shortcut instead of next or previous tab.",
+	"version": "1.0",
+	"permissions": [
+		"storage"
+	],
+	"background": {
+    "scripts": ["background.js"]
+  },
+	"icons": {
+		"16": "img/icon16.png",
+		"48": "img/icon48.png",
+		"128": "img/icon128.png"
+	},
+	"browser_action": {
+		"default_icon": {
+			"19": "img/icon48.png",
+			"38": "img/icon48.png"
+		},
+		"default_popup": "popup.html"
+	},
+	"permissions": [ "tabs"],
+	"commands": {
+    "_execute_browser_action": {
+       "suggested_key": {
+         "default": "Ctrl+E",
+         "mac": "Command+E",
+         "linux": "Ctrl+Q"
+       }
+    },
+    "quick-prev-tab": {
+      "description": "Quick next tab (suggested Ctrl+J)"
+    },
+    "quick-next-tab": {
+      "description": "Quick previous tab (suggested Ctrl+K)"
+    }
+  }
+	"content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
+	"web_accessible_resources": [
+		"img/icon128.png"
+	]
+}
