@@ -1,6 +1,10 @@
 
 tabs = [];
 
+function log() {
+  console.log.apply(console, Array.prototype.slice.call(arguments))
+}
+
 
 function getTabList(){
   return tabs;
@@ -11,7 +15,13 @@ function setTabsList(tabArray){
 }
 
 function indexOfTab(tabId){
-  return getTabList().indexOf(tabId);
+  tabList = getTabList();
+  for (var j =0; j<tabList.length; j++){
+    if (tabList[j].id == tabId){
+      return j;
+    }
+  }
+  return -1;
 }
 
 function recordTabsRemoved(tabId){
@@ -19,57 +29,61 @@ function recordTabsRemoved(tabId){
    tabList.splice(indexOfTab(tabId),1);
 }
 
-function recordTabsAdded(tabId){
-  getTabList().append(tabId);
+function recordTabsAdded(tab){
+  getTabList().unshift(tab);
 }
 
 function recordTabsUpdated(tabId){
+  var idx = indexOfTab(tabId);
   tabList = getTabList();
-  tabList.splice(indexOfTab(tabId),1);
-  tabList.unshift(tabId);
+  var tab = tabList[idx];
+  tabList.splice(idx,1);
+  tabList.unshift(tab);
 
-}
-
-function updatePopupHtml(){
-  tabList = getTabList();
-  var content_list_container = document.getElementById("tab_container");
-  if (tabList){
-    tabList.forEach(function(tab){
-      var tab_element_div = document.createElement('div');
-      tab_element_div.className = "item tab open" + tab_element_div.urlStyle;
-      var tab_element_div_image = document.createElement('div');
-      tab_element_div_image.className = tab.tabImageStyle;
-      var image = document.createElement('img');
-      image.width = "16";
-      image.height = "16";
-      image.src = tab.templateTabImage;
-      tab_element_div_image.appendChild(image);
-      tab_element_div.appendChild(tab_element_div_image);
-      content_list_container.appendChild(tab_element_div);
-    })
-  }
 }
 
 function init(){
   // reset the tabs list
   tabs = [];
 
+  // count and record all the open tabs for all the windows
+  chrome.windows.getAll({populate:true}, function (windows) {
+
+    for(var i = 0; i < windows.length; i++) {
+      var t = windows[i].tabs;
+
+      for(var j = 0; j < t.length; j++) {
+        recordTabsAdded(t[j]);
+      }
+
+    }
+
+    // // set the current tab as the first item in the tab list
+    // chrome.tabs.query({currentWindow:true, active:true}, function(tabArray) {
+    //   log('initial selected tab', tabArray);
+    //   updateTabsOrder(tabArray);
+    // });
+  });
+
+
   // attach an event handler to capture tabs as they are closed
   chrome.tabs.onRemoved.addListener(function(tabId) {
+    log("Tab removed");
     recordTabsRemoved(tabId);
   });
 
   // attach an event handler to capture tabs as they are opened
   chrome.tabs.onCreated.addListener(function (tab) {
-    recordTabsAdded(tab.id);
+    log("tab onCreated",tab.id);
+    recordTabsAdded(tab);
   });
 
-  // chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-  //   tabs[indexOfTab(tabId)] = tab;
-  // });
+  chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+    tabs[indexOfTab(tabId)] = tab;
+  });
 
   chrome.tabs.onActivated.addListener(function (info) {
-    // log('onActivated tab', info.tabId);
+    log('onActivated tab', info.tabId);
     recordTabsUpdated(info.tabId);
   });
 
