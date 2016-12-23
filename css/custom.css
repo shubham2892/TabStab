@@ -15,6 +15,10 @@ div.content {
 	height: 300px;
 }
 
+div.withfocus {
+	background-color: cadetblue;
+}
+
 div.tab_container {
 	width: 500px;
 	height: 100%;

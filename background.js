@@ -17,7 +17,7 @@ function setTabsList(tabArray){
 function indexOfTab(tabId){
   tabList = getTabList();
   for (var j =0; j<tabList.length; j++){
-    if (tabList[j].id == tabId){
+    if (tabList[j].id === tabId){
       return j;
     }
   }
