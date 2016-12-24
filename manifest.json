@@ -26,16 +26,14 @@
     "_execute_browser_action": {
        "suggested_key": {
          "default": "Ctrl+E",
-         "mac": "Command+E",
+         "mac": "MacCtrl+E",
          "linux": "Ctrl+Q"
        }
     },
-    "quick-prev-tab": {
-      "description": "Quick next tab (suggested Ctrl+J)"
-    },
     "quick-next-tab": {
-      "description": "Quick previous tab (suggested Ctrl+K)"
+      "description": "Quick next tab (suggested Ctrl+J)"
     }
+
   },
 	"web_accessible_resources": [
 		"img/icon128.png"

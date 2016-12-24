@@ -20,11 +20,6 @@ function switchTabs(tabId){
   chrome.tabs.update(parseInt(tabId,10), {active: true});
 }
 
-function switchToPreviousTab(){
-    tabList = getTabList();
-    switchTabs(tabList[-1].id);
-}
-
 function switchToNextTab(){
   tabList = getTabList();
   switchTabs(tabList[1].id);
@@ -115,9 +110,7 @@ function init(){
   chrome.commands.onCommand.addListener(function(command) {
     //log('Command:', command);
 
-    if (command === "quick-prev-tab") {
-      switchToPreviousTab();
-    } else if (command === "quick-next-tab") {
+    if (command === "quick-next-tab") {
       switchToNextTab();
     }
 
