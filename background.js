@@ -2,7 +2,7 @@
 tabs = [];
 
 function log() {
-  console.log.apply(console, Array.prototype.slice.call(arguments))
+  console.log.apply(console, Array.prototype.slice.call(arguments));
 }
 
 
@@ -12,6 +12,22 @@ function getTabList(){
 
 function setTabsList(tabArray){
   tabs = tabArray;
+}
+
+
+
+function switchTabs(tabId){
+  chrome.tabs.update(parseInt(tabId,10), {active: true});
+}
+
+function switchToPreviousTab(){
+    tabList = getTabList();
+    switchTabs(tabList[-1].id);
+}
+
+function switchToNextTab(){
+  tabList = getTabList();
+  switchTabs(tabList[1].id);
 }
 
 function indexOfTab(tabId){
@@ -96,34 +112,18 @@ function init(){
 //     }
 //   });
 
-  // chrome.commands.onCommand.addListener(function(command) {
-  //   //log('Command:', command);
-  //
-  //   if (popupMessagePort) {
-  //     if (command === "quick-prev-tab") {
-  //       popupMessagePort.postMessage({move: "prev"});
-  //     } else if (command === "quick-next-tab") {
-  //       popupMessagePort.postMessage({move: "next"});
-  //     }
-  //   } else {
-  //     chrome.tabs.query({currentWindow: true, active: true}, function(tabArray) {
-  //       if (tabArray.length > 0) {
-  //         // find the index of the current focused tab
-  //         var ctIdx = indexOfTab(tabArray[0].id);
-  //
-  //         if (command === "quick-prev-tab" && tabs.length > 1 && ctIdx > 0) {
-  //           //log('select previous tab', tabArray, ctIdx - 1, tabs);
-  //           switchTabs(tabs[ctIdx - 1].id)
-  //         } else if (command === "quick-next-tab" && tabs.length > 1 && ctIdx < tabs.length - 1) {
-  //           //log('select next tab', tabArray, ctIdx + 1, tabs);
-  //           switchTabs(tabs[ctIdx + 1].id)
-  //         }
-  //
-  //       }
-  //     });
-  //
-  //   }
-  // });
+  chrome.commands.onCommand.addListener(function(command) {
+    //log('Command:', command);
+
+    if (command === "quick-prev-tab") {
+      switchToPreviousTab();
+    } else if (command === "quick-next-tab") {
+      switchToNextTab();
+    }
+
+
+  });
+
 }
 
 init();
