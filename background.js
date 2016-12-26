@@ -16,9 +16,6 @@ function setTabsList(tabArray){
 
 
 
-function switchTabs(tabId){
-  chrome.tabs.update(parseInt(tabId,10), {active: true});
-}
 
 function switchToNextTab(){
   tabList = getTabList();
@@ -35,13 +32,22 @@ function indexOfTab(tabId){
   return -1;
 }
 
+function switchTabs(tabId){
+  var index = indexOfTab(parseInt(tabId,10));
+  var windowId = getTabList()[index].windowId;
+  chrome.windows.update(windowId, {focused:true}, function () {
+      chrome.tabs.update(parseInt(tabId,10), {active:true});
+  });
+}
+
+
 function recordTabsRemoved(tabId){
    tabList = getTabList();
    tabList.splice(indexOfTab(tabId),1);
 }
 
 function recordTabsAdded(tab){
-  getTabList().unshift(tab);
+  getTabList().push(tab);
 }
 
 function recordTabsUpdated(tabId){
@@ -69,23 +75,21 @@ function init(){
 
     }
 
-    // // set the current tab as the first item in the tab list
+    // set the current tab as the first item in the tab list
     // chrome.tabs.query({currentWindow:true, active:true}, function(tabArray) {
     //   log('initial selected tab', tabArray);
-    //   updateTabsOrder(tabArray);
+      // recordTabsUpdated(tabArray[0].id);
     // });
   });
 
 
   // attach an event handler to capture tabs as they are closed
   chrome.tabs.onRemoved.addListener(function(tabId) {
-    log("Tab removed");
     recordTabsRemoved(tabId);
   });
 
   // attach an event handler to capture tabs as they are opened
   chrome.tabs.onCreated.addListener(function (tab) {
-    log("tab onCreated",tab.id);
     recordTabsAdded(tab);
   });
 
@@ -94,7 +98,6 @@ function init(){
   });
 
   chrome.tabs.onActivated.addListener(function (info) {
-    log('onActivated tab', info.tabId);
     recordTabsUpdated(info.tabId);
   });
 
