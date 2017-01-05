@@ -11,7 +11,7 @@ var myTabs = (function () {
           return tabList;
         }
       };
-  };
+  }
 
   return {
 
@@ -29,24 +29,19 @@ var myTabs = (function () {
 })();
 
 
-function log() {
-  console.log.apply(console, Array.prototype.slice.call(arguments));
-}
-
-
 function getTabList(){
   return myTabs.getInstance().getGlobalTabList();
 }
 
 
 function switchToNextTab(){
-  tabList = getTabList();
+  var tabList = getTabList();
   switchTabs(tabList[1].id);
 }
 
 function indexOfTab(tabId){
-  tabList = getTabList();
-  for (var j =0; j<tabList.length; j++){
+  var tabList = getTabList();
+  for (var j =0; j< tabList.length; j++){
     if (tabList[j].id === tabId){
       return j;
     }
@@ -64,7 +59,7 @@ function switchTabs(tabId){
 
 
 function recordTabsRemoved(tabId){
-  tabList = getTabList();
+  var tabList = getTabList();
   var idx = indexOfTab(tabId);
   if (idx >= 0){
     tabList.splice(idx,1);
@@ -72,12 +67,13 @@ function recordTabsRemoved(tabId){
 }
 
 function recordTabsAdded(tab){
-  getTabList().push(tab);
+  var tabList = getTabList();
+  tabList.push(tab);
 }
 
 function recordTabsUpdated(tabId){
   var idx = indexOfTab(tabId);
-  tabList = getTabList();
+  var tabList = getTabList();
   console.log(idx);
   if (idx >= 0){
     var tabs = tabList.splice(idx,1);
