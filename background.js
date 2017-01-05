@@ -1,6 +1,33 @@
 
+var myTabs = (function () {
 
-tabs = [];
+  // Instance stores a reference to the Singleton
+  var instance;
+
+  function init() {
+      var tabList = [];
+      return {
+        getGlobalTabList: function() {
+          return tabList;
+        }
+      };
+  };
+
+  return {
+
+    // Get the Singleton instance if one exists
+    // or create one if it doesn't
+    getInstance: function () {
+
+      if ( !instance ) {
+        instance = init();
+      }
+
+      return instance;
+    }
+  };
+})();
+
 
 function log() {
   console.log.apply(console, Array.prototype.slice.call(arguments));
@@ -8,14 +35,8 @@ function log() {
 
 
 function getTabList(){
-  return tabs;
+  return myTabs.getInstance().getGlobalTabList();
 }
-
-function setTabsList(tabArray){
-  tabs = tabArray;
-}
-
-
 
 
 function switchToNextTab(){
@@ -66,8 +87,6 @@ function recordTabsUpdated(tabId){
 }
 
 function init(){
-  // reset the tabs list
-  tabs = [];
 
   // count and record all the open tabs for all the windows
   chrome.windows.getAll({populate:true}, function (windows) {
@@ -103,12 +122,14 @@ function init(){
 
   // attach an event handler to capture tabs as they are opened
   chrome.tabs.onCreated.addListener(function (tab) {
-    console.log("------------------------------------------------------");
-    console.log("TabId created:");
-    console.log(tab.Id);
-    recordTabsAdded(tab);
-    console.log(getTabList());
-    console.log("------------------------------------------------------");
+    if (tab.id !== chrome.tabs.TAB_ID_NONE ){
+      console.log("------------------------------------------------------");
+      console.log("TabId created:");
+      console.log(tab.id);
+      recordTabsAdded(tab);
+      console.log(getTabList());
+      console.log("------------------------------------------------------");
+    }
 
   });
 
