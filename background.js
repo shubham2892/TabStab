@@ -4,10 +4,10 @@ var myTabs = (function () {
     var instance;
 
     function init() {
-        var tabList = [];
+        var GlobaltabList = [];
         return {
             getGlobalTabList: function () {
-                return tabList;
+                return GlobaltabList;
             }
         };
     }
@@ -19,6 +19,7 @@ var myTabs = (function () {
         getInstance: function () {
 
             if (!instance) {
+                // console.log("new instance created");
                 instance = init();
             }
 
@@ -32,6 +33,14 @@ function getTabList() {
     return myTabs.getInstance().getGlobalTabList();
 }
 
+function printTabList() {
+    // console.log("Ids.....");
+    var tabList = getTabList();
+    for (var i = 0; i < tabList.length; i++) {
+        // console.log(tabList[i].id + "-->" + tabList[i].title + ":::" + i);
+    }
+}
+
 
 function switchToNextTab() {
     var tabList = getTabList();
@@ -41,6 +50,7 @@ function switchToNextTab() {
 }
 
 function indexOfTab(tabId) {
+
     var tabList = getTabList();
     for (var j = 0; j < tabList.length; j++) {
         if (tabList[j].id === tabId) {
@@ -75,10 +85,9 @@ function recordTabsAdded(tab) {
 function recordTabsActivated(tabId) {
     var idx = indexOfTab(tabId);
     var tabList = getTabList();
-    console.log(idx);
+    // console.log(idx);
     if (idx >= 0) {
         var tabs = tabList.splice(idx, 1);
-        console.log(tabs);
         tabList.unshift(tabs[0]);
     }
 }
@@ -90,9 +99,9 @@ function init() {
 
         for (var i = 0; i < windows.length; i++) {
             var t = windows[i].tabs;
-            console.log("new window");
+            // console.log("new window");
             for (var j = 0; j < t.length; j++) {
-                console.log("new tab");
+                // console.log("new tab");
                 recordTabsAdded(t[j]);
             }
 
@@ -108,12 +117,12 @@ function init() {
 
     // attach an event handler to capture tabs as they are closed
     chrome.tabs.onRemoved.addListener(function (tabId) {
-        console.log("------------------------------------------------------");
-        console.log("TabId Removed:");
-        console.log(tabId);
+        // console.log("------------------------------------------------------");
+        // console.log("TabId Removed:");
+        // console.log(tabId);
         recordTabsRemoved(tabId);
-        console.log(getTabList());
-        console.log("------------------------------------------------------");
+        printTabList();
+        // console.log("------------------------------------------------------");
 
     });
 
@@ -121,43 +130,55 @@ function init() {
     chrome.tabs.onCreated.addListener(function (tab) {
 
         if (tab.id !== chrome.tabs.TAB_ID_NONE) {
-            console.log("------------------------------------------------------");
-            console.log("TabId created:");
-            console.log(tab.id);
+            // console.log("------------------------------------------------------");
+            // console.log("TabId created:");
+            // console.log(tab.id);
             recordTabsAdded(tab);
-            console.log(getTabList());
-            console.log("------------------------------------------------------");
-        }else{
-            console.log("Null tab id created");
-            console.log(tab.id);
+            printTabList();
+            // console.log("------------------------------------------------------");
+        } else {
+            // console.log("Null tab id created");
+            // console.log(tab.id);
         }
 
     });
 
     chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
         if (changeInfo.status == 'complete' && tab.status == 'complete') {
-            console.log("------------------------------------------------------");
-            console.log("TabId Updated:");
-            console.log(tabId);
+            // console.log("------------------------------------------------------");
+            // console.log("TabId Updated:");
+            // console.log(tabId);
             var tabList = getTabList();
             var idx = indexOfTab(tabId);
             if (idx >= 0) {
                 tabList[idx] = tab;
-            }else{
-                console.log("Tab not found");
+            } else {
+                // console.log("Tab not found");
             }
-            console.log(getTabList());
-            console.log("------------------------------------------------------");
+            printTabList();
+            // console.log("------------------------------------------------------");
+        } else {
+            // console.log("Incomplete request:" + "Old tab id:" + tabId + " new tab Id:" + tab.id);
+
         }
     });
 
+    chrome.tabs.onReplaced.addListener(function (addedTabId, removedTabId) {
+        var idx = indexOfTab(removedTabId);
+        var tabList = getTabList();
+        if (idx >= 0) {
+            tabList[idx].id = addedTabId;
+        }
+        // console.log("Tab Replaced ^..^" + addedTabId + "Removed Tab Id:" + removedTabId);
+    });
+
     chrome.tabs.onActivated.addListener(function (info) {
-        console.log("------------------------------------------------------");
-        console.log("TabId Activated:");
-        console.log(info.tabId);
+        // console.log("------------------------------------------------------");
+        // console.log("TabId Activated:");
+        // console.log(info.tabId);
         recordTabsActivated(info.tabId);
-        console.log(getTabList());
-        console.log("------------------------------------------------------");
+        printTabList();
+        // console.log("------------------------------------------------------");
 
     });
 
@@ -165,12 +186,12 @@ function init() {
         if (windowId != chrome.windows.WINDOW_ID_NONE) {
             chrome.tabs.query({windowId: windowId, active: true}, function (tabArray) {
                 if (tabArray.length === 1) {
-                    console.log("------------------------------------------------------");
-                    console.log("TabId Activated(Window Changed):");
-                    console.log(tabArray[0].id);
+                    // console.log("------------------------------------------------------");
+                    // console.log("TabId Activated(Window Changed):");
+                    // console.log(tabArray[0].id);
                     recordTabsActivated(tabArray[0].id);
-                    console.log(getTabList());
-                    console.log("------------------------------------------------------");
+                    printTabList();
+                    // console.log("------------------------------------------------------");
                 }
 
             });

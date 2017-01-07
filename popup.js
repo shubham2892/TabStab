@@ -19,7 +19,7 @@ function closeWindow() {
 
 function scrollToFocus_discarded() {
   var element = $(".withfocus");
-  var container_element = $(".tab_container")
+  var container_element = $(".tab_container");
   var offset = element.offset().top;
   var elementHeight = element.outerHeight(true);
 
@@ -53,9 +53,6 @@ function scrollToFocus(){
   var container_end = container_top + container_hieght;
   var container_element_end = container_element_top + container_element_height;
   var container_scrollTop = container.scrollTop();
-  console.log(container_end);
-  console.log(container_element_end);
-  console.log(container_element_height);
   if (container_end - container_element_end <= 0){
     container.animate({scrollTop: container_scrollTop + container_element_height}, 10);
     // container.scrollTop = container_element_end + container_element_height;
@@ -117,7 +114,7 @@ function focusSecond(){
 
 
 function updatePopupHtml(){
-  tabList = bg.getTabList();
+  var tabList = bg.getTabList();
   // console.log(tabList);
   var content_list_container = document.getElementById("tab_container");
   if (tabList){
@@ -145,7 +142,7 @@ function updatePopupHtml(){
 $(document).keydown(function(e) {
     switch(e.which) {
         case 38: // up
-          focusPrev()
+          focusPrev();
           break;
 
 
