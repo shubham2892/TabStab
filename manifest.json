@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "TabSwap",
-  "description": "Working with too many tabs. Now switch between them efficiently with the help of keyboard. Helps you switch to most recently used tab using keyboard shortcut instead of just previous or next tab.",
+  "description": "Working with too many tabs. Switch between the most recently used tabs and last recently used using keyboard shortcut",
   "version": "1.0",
   "background": {
     "scripts": [
